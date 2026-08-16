@@ -60,11 +60,13 @@ public class CutService {
 
             c.setActive(false);
             c.setInvoicedAt(OffsetDateTime.now());
+            c.setInvoicedBy(createdBy != null ? createdBy : "system");
         }
 
         invoice.setTotalPieces(totalPieces);
         invoice.setTotalValue(totalValue);
 
+        // save invoice and cuts atomically (transactional)
         Invoice saved = invoiceRepository.save(invoice);
         cutRepository.saveAll(active);
         return saved;

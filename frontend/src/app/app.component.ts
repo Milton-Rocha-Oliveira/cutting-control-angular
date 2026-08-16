@@ -7,7 +7,21 @@ import { Component } from '@angular/core';
       <aside class="sidebar">Controle de Cortes</aside>
       <main class="content">
         <h1>Bem-vindo ao Controle de Cortes</h1>
-        <p>Use o menu para navegar: Dashboard, Cortes, Fornecedores, Faturamento, Histórico.</p>
+        <nav>
+          <button (click)="view='dashboard'">Dashboard</button>
+          <button (click)="view='suppliers'">Fornecedores</button>
+          <button (click)="view='cuts'">Cortes</button>
+          <button (click)="view='invoicing'">Faturamento</button>
+        </nav>
+        <div style="float:right">
+          <app-login></app-login>
+        </div>
+        <section>
+          <app-suppliers *ngIf="view==='suppliers'"></app-suppliers>
+          <app-cuts *ngIf="view==='cuts'"></app-cuts>
+          <app-invoicing *ngIf="view==='invoicing'"></app-invoicing>
+          <div *ngIf="view==='dashboard'">Painel (em breve)</div>
+        </section>
       </main>
     </div>
   `,
