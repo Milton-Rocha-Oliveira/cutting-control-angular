@@ -1,0 +1,5 @@
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AuthUser } from '../auth.service'; import { AppSection } from './app-sidebar.component';
+@Component({selector:'app-header',standalone:true,imports:[CommonModule],changeDetection:ChangeDetectionStrategy.OnPush,template:`<header><div class="header-heading"><div><p class="eyebrow">GESTÃO OPERACIONAL</p><h1>{{ title }}</h1></div></div><div class="user-chip"><span class="avatar">{{ (user?.name || 'U').slice(0,2).toUpperCase() }}</span><span>{{ user?.name }}<br><small>{{ user?.email }}</small></span><button *ngIf="showLogout" class="logout" (click)="logout.emit()">Sair</button></div></header>`})
+export class AppHeaderComponent { @Input() user:AuthUser|null=null; @Input({required:true}) section!:AppSection; @Input() showLogout=true; @Output() logout=new EventEmitter<void>(); get title():string{return ({dashboard:'Visão geral',suppliers:'Fornecedores',cuts:'Cortes disponíveis',billing:'Novo faturamento',reports:'Histórico e relatórios',users:'Usuários'} as Record<AppSection,string>)[this.section];} }

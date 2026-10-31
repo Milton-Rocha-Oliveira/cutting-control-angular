@@ -1,0 +1,33 @@
+<div [class.dark-theme]="darkMode">
+    <ng-container *ngIf="authReady; else loadingScreen">
+        <app-auth-page *ngIf="!authUser; else authenticatedApp" [busy]="authBusy" [error]="authError" [offlineMode]="offlineMode" [publicRegistration]="publicRegistration"
+                       (login)="submitLogin($event)" (register)="registerAccount($event)"></app-auth-page>
+        <ng-template #authenticatedApp>
+            <div class="auth-loading" *ngIf="!accountStatusLoaded">Validando autorização da conta...</div>
+            <section class="auth-screen" *ngIf="accountStatusLoaded && !accountAuthorized">
+                <div class="auth-card"><h1>Conta sem acesso</h1><p *ngIf="authError">{{ authError }}</p><p *ngIf="!authError">Não foi possível autorizar esta conta. Saia e tente novamente.</p><button class="secondary" (click)="logout()">Sair</button></div>
+            </section>
+            <div class="app-shell" *ngIf="accountStatusLoaded && accountAuthorized">
+                <app-sidebar [section]="section" [rootUser]="isRootUser && !autoLocalAccess" [darkMode]="darkMode"
+                             (navigate)="setSection($event)" (themeToggle)="toggleTheme()"></app-sidebar>
+                <main class="content">
+                    <app-header [section]="section" [user]="authUser" [showLogout]="!autoLocalAccess"
+                                (logout)="logout()"></app-header>
+                    <app-change-password *ngIf="!autoLocalAccess"></app-change-password>
+                    <div *ngIf="message" class="toast">{{ message }}</div>
+                    <app-dashboard-page *ngIf="section==='dashboard'" [dashboard]="dashboard"
+                                        (openBilling)="setSection('billing')"
+                                        (openReports)="setSection('reports')"></app-dashboard-page>
+                    <app-suppliers-page *ngIf="section==='suppliers'" [vm]="this"></app-suppliers-page>
+                    <app-cuts-page *ngIf="section==='cuts'" [vm]="this"></app-cuts-page>
+                    <app-billing-page *ngIf="section==='billing'" [vm]="this"></app-billing-page>
+                    <app-reports-page *ngIf="section==='reports'" [vm]="this"></app-reports-page>
+                    <app-users-page *ngIf="section==='users' && isRootUser"></app-users-page>
+                </main>
+            </div>
+        </ng-template>
+    </ng-container>
+    <ng-template #loadingScreen>
+        <div class="auth-loading">Carregando autenticação...</div>
+    </ng-template>
+</div>

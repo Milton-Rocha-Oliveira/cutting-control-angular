@@ -1,0 +1,22 @@
+:host { display: block; position: fixed; inset: 0 auto 0 0; z-index: 31; width: 252px; height: 100vh; }
+.sidebar { box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; gap: 18px; width: 100%; height: 100%; padding: 28px 16px; overflow-y: auto; background: linear-gradient(180deg,#071a32 0%,#0a2c50 100%); border-right: 1px solid #123b63; box-shadow: 5px 0 20px rgba(3,18,36,.2); }
+.brand { display: flex; flex: 0 0 auto; align-items: center; justify-content: center; margin: 0 0 16px; }
+.brand-mark { display: block; width: 100%; max-width: 220px; max-height: 100px; height: auto; object-fit: contain; border-radius: 7px; }
+.sidebar nav { display: grid; min-width: 0; flex: 0 0 auto; gap: 7px; }
+.sidebar button:not(.theme-toggle) { display: flex; min-height: 46px; width: 100%; align-items: center; justify-content: flex-start; padding: 9px 12px; border: 0; border-radius: 9px; background: transparent; color: #c4d4e6; font: inherit; font-size: 15px; font-weight: 700; line-height: 1.2; text-align: left; white-space: nowrap; cursor: pointer; transition: background .18s ease,color .18s ease; }
+.sidebar button span { display: inline; margin-left: 11px; }
+.sidebar button:not(.theme-toggle).active,.sidebar button:not(.theme-toggle):hover { background: #15395f; color: #ffad2f; }
+.theme-toggle { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; margin-top: auto; border: 1px solid #315272; border-radius: 10px; background: #102f50; color: #ffbd55; font-size: 20px; cursor: pointer; }
+.sidebar button:focus-visible { outline: 3px solid #ffad2f; outline-offset: 2px; }
+
+@media (max-width: 620px) {
+  :host { inset: 0 0 auto; width: 100%; height: 160px; }
+  .sidebar { position: relative; display: grid; height: 160px; grid-template-columns: minmax(0,1fr); grid-template-rows: 62px 1fr; grid-template-areas: "brand" "nav"; gap: 3px; padding: 4px 8px 7px; overflow: hidden; border-left: 0; border-bottom: 1px solid #123b63; }
+  .brand { grid-area: brand; width: 100%; justify-content: center; margin: 0; }
+  .brand-mark { width: auto; max-width: 176px; max-height: 56px; }
+  .sidebar nav { display: grid; width: 100%; grid-area: nav; grid-template-columns: repeat(3,minmax(0,1fr)); grid-template-rows: repeat(2,minmax(42px,1fr)); gap: 4px; overflow: visible; padding-top: 5px; border-top: 1px solid #244766; }
+  .sidebar button:not(.theme-toggle) { min-height: 42px; padding: 5px 3px; justify-content: center; font-size: 15px; line-height: 1.08; text-align: center; white-space: normal; }
+  .sidebar button span { margin-left: 0; }
+  .sidebar nav button:last-child:nth-child(5) { grid-column: 2; }
+  .theme-toggle { position: absolute; top: 8px; right: 9px; width: 39px; height: 39px; margin: 0; }
+}

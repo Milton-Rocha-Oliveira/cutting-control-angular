@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/cortes;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+  jpa.hibernate.ddl-auto: update
+  flyway.enabled: false
+app.jwt.secret: ${APP_JWT_SECRET:local-development-secret-change-this-now}
+app.auth.public-registration: ${APP_PUBLIC_REGISTRATION:true}
+app.data-encryption-key: ${APP_DATA_ENCRYPTION_KEY:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=}

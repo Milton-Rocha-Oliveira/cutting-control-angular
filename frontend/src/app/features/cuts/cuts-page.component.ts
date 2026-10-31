@@ -1,0 +1,2 @@
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core'; import { CommonModule } from '@angular/common'; import { FormsModule } from '@angular/forms'; import type { AppComponent } from '../../app.component';
+@Component({selector:'app-cuts-page',standalone:true,imports:[CommonModule,FormsModule],templateUrl:'./cuts-page.component.html',styleUrl:'./cuts-page.component.css',changeDetection:ChangeDetectionStrategy.Default}) export class CutsPageComponent{@Input({required:true}) vm!:AppComponent;}

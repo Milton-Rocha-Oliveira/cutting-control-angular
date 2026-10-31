@@ -1,0 +1,5 @@
+{
+  "framework": "angular",
+  "buildCommand": "npm run build:vercel",
+  "outputDirectory": "dist/controle-de-cortes/browser"
+}

@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+set -eu
+
+if command -v mvn >/dev/null 2>&1; then
+  exec mvn "$@"
+fi
+
+maven_user_home=${MAVEN_USER_HOME:-"${HOME:-}/.m2"}
+for candidate in "$maven_user_home"/wrapper/dists/apache-maven-*-bin/*/apache-maven-*/bin/mvn; do
+  if [ -x "$candidate" ]; then
+    exec "$candidate" "$@"
+  fi
+done
+
+echo "Maven não foi encontrado. Instale Maven 3.9+ ou deixe uma distribuição Maven Wrapper em $maven_user_home/wrapper/dists." >&2
+exit 1

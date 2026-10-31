@@ -1,27 +1,99 @@
 {
-  "name": "cut-control-frontend",
-  "version": "0.0.1",
+  "name": "controle-de-cortes",
+  "description": "Controle de Cortes - gestão de fornecedores, cortes e faturamento",
+  "author": {
+    "name": "Milton Rocha de Oliveira",
+    "email": "milton.rocha@gmail.com"
+  },
+  "homepage": "https://example.com/controle-de-cortes",
+  "version": "1.1.0",
   "private": true,
+  "main": "electron/main.cjs",
   "scripts": {
-    "start": "ng serve --host 0.0.0.0 --port 4200",
+    "start": "ng serve",
     "build": "ng build",
-    "test": "ng test"
+    "build:vercel": "ng build && node scripts/write-vercel-config.mjs",
+    "test": "ng test --no-watch",
+    "electron:dev": "npm run build && electron .",
+    "electron:build": "npm run build && electron-builder --win nsis",
+    "electron:build:linux": "npm run build && electron-builder --linux AppImage"
   },
   "dependencies": {
-    "@angular/animations": "^15.0.0",
-    "@angular/common": "^15.0.0",
-    "@angular/compiler": "^15.0.0",
-    "@angular/core": "^15.0.0",
-    "@angular/forms": "^15.0.0",
-    "@angular/platform-browser": "^15.0.0",
-    "@angular/platform-browser-dynamic": "^15.0.0",
-    "@angular/router": "^15.0.0",
-    "rxjs": "^7.5.0",
-    "zone.js": "^0.12.0",
-    "@supabase/supabase-js": "^2.0.0"
+    "@angular/animations": "22.2.3",
+    "@angular/common": "22.2.3",
+    "@angular/compiler": "22.2.3",
+    "@angular/core": "22.2.3",
+    "@angular/forms": "22.2.3",
+    "@angular/platform-browser": "22.2.3",
+    "@angular/platform-browser-dynamic": "22.2.3",
+    "@angular/router": "22.2.3",
+    "@angular/service-worker": "22.2.3",
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/cli": "8.4.3",
+    "@capacitor/core": "^8.5.1",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.3",
+    "zone.js": "0.16.1"
   },
   "devDependencies": {
-    "@angular/cli": "^15.0.0",
-    "typescript": "^4.8.0"
+    "@angular/build": "22.2.4",
+    "@angular/cli": "22.2.4",
+    "@angular/compiler-cli": "22.2.3",
+    "@angular/pwa": "22.2.4",
+    "electron": "45.0.0",
+    "electron-builder": "^26.0.12",
+    "fake-indexeddb": "^6.2.6",
+    "jsdom": "^30.1.3",
+    "typescript": "6.0.3",
+    "vitest": "^5.0.5"
+  },
+  "overrides": {
+    "@angular/build": {
+      "vite": "8.3.5"
+    }
+  },
+  "build": {
+    "appId": "br.com.controledecortes.app",
+    "productName": "Controle de Cortes",
+    "icon": "build/icon.png",
+    "asar": true,
+    "files": [
+      "dist/controle-de-cortes/browser/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "publish": null,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "Controle-de-Cortes-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Controle de Cortes"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "artifactName": "controle-de-cortes-${version}-${arch}.${ext}",
+      "category": "Office",
+      "icon": "build"
+    }
   }
 }
