@@ -1,0 +1,90 @@
+<section class="reports-view">
+    <div class="reports-heading">
+        <p class="eyebrow">CONSULTAS</p>
+        <h2>Histórico de faturamentos</h2>
+        <p>Os totais incluem apenas peças que já passaram por faturamento no mês selecionado.</p>
+    </div>
+
+    <section class="panel report-controls" aria-label="Filtros do histórico">
+        <div class="report-fields">
+            <label>Ano
+                <input [(ngModel)]="vm.reportYear" type="number" min="2000" max="9999" aria-label="Ano do relatório">
+            </label>
+            <label>Mês
+                <input [(ngModel)]="vm.reportMonth" type="number" min="1" max="12" aria-label="Mês do relatório">
+            </label>
+            <label class="supplier-filter">Fornecedor
+                <span class="search-field">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg>
+                    <input [(ngModel)]="vm.reportSupplierSearch" (ngModelChange)="vm.onReportSupplierSearchChanged()" placeholder="Todos os fornecedores" aria-label="Pesquisar fornecedor">
+                </span>
+            </label>
+        </div>
+
+        <button class="primary query-button" [disabled]="vm.reportLoading" (click)="vm.loadMonthlyReport()">
+            {{ vm.reportLoading ? 'Consultando…' : 'Consultar mês' }}
+        </button>
+
+        <div class="export-actions">
+            <button class="secondary" [disabled]="vm.reportLoading" (click)="vm.downloadReport()">Exportar CSV</button>
+            <button class="secondary" (click)="vm.downloadBackup()">Backup JSON</button>
+            <label class="secondary backup-import" *ngIf="vm.offlineMode">Importar backup
+                <input type="file" accept=".json,application/json" (change)="vm.restoreBackup($event)">
+            </label>
+        </div>
+    </section>
+
+    <div *ngIf="vm.reportError" class="report-error" role="alert">
+        <span>{{ vm.reportError }}</span>
+        <button class="secondary" (click)="vm.loadMonthlyReport()">Tentar novamente</button>
+    </div>
+
+    <section class="monthly-summary" *ngIf="vm.reportMode === 'month' && !vm.reportError">
+        <div class="summary-heading">
+            <div><p class="eyebrow">RESUMO DO PERÍODO</p><h3>{{ vm.loadedReportMonth | number:'2.0' }}/{{ vm.loadedReportYear }}</h3></div>
+            <button class="secondary" [disabled]="vm.reportLoading" (click)="vm.printMonthlyPdf()">Salvar resumo em PDF</button>
+        </div>
+        <p *ngIf="vm.reportLoading" class="report-loading" aria-live="polite">Consultando os fechamentos…</p>
+        <div class="summary-cards" *ngIf="!vm.reportLoading">
+            <article><small>PEÇAS FATURADAS</small><strong>{{ vm.monthlyProductionPieces() | number:'1.0-0' }}</strong><span>incluídas nos fechamentos do mês</span></article>
+            <article><small>VALOR DAS PEÇAS FATURADAS</small><strong>{{ vm.money(vm.monthlyProductionValue()) }}</strong><span>total dos itens faturados</span></article>
+            <article><small>TOTAL DOS FECHAMENTOS</small><strong>{{ vm.money(vm.monthlyInvoicedValue()) }}</strong><span>{{ vm.settlements.length }} fechamento(s) concluído(s)</span></article>
+        </div>
+    </section>
+
+    <div class="settlements-heading">
+        <div><h3>Fechamentos do mês</h3>
+            <p>{{ vm.filteredReportSettlements.length }} registro(s)</p></div>
+        <span class="period-badge">{{ vm.loadedReportMonth | number:'2.0' }}/{{ vm.loadedReportYear }}</span>
+    </div>
+
+    <div *ngIf="vm.reportLoading" class="empty report-list-loading" aria-live="polite">Carregando histórico…</div>
+    <div class="settlement-list" *ngIf="!vm.reportLoading && !vm.reportError">
+        <article class="settlement-card" *ngFor="let item of vm.visibleReportSettlements" [class.is-open]="vm.expandedReportId === item.id">
+            <button class="settlement-toggle" [attr.aria-expanded]="vm.expandedReportId === item.id" (click)="vm.toggleReportDetails(item.id)">
+                <span class="settlement-title"><strong>{{ item.invoiceNumber || 'Fechamento' }}</strong><small>{{ item.supplierName }}</small></span>
+                <span class="settlement-amount">{{ vm.money(item.totalAmount) }}</span>
+                <span class="settlement-meta"><span>{{ vm.settlementItemCount(item) }} cortes</span><span>{{ item.totalPieces | number:'1.0-0' }} peças</span><span>{{ item.settledAt | date:'dd/MM/yyyy HH:mm' }}</span></span>
+                <span class="expand-indicator" aria-hidden="true">{{ vm.expandedReportId === item.id ? '−' : '+' }}</span>
+            </button>
+            <div class="settlement-details" *ngIf="vm.expandedReportId === item.id">
+                <div class="settlement-detail-grid">
+                    <div><small>FORNECEDOR</small><strong>{{ item.supplierName }}</strong></div>
+                    <div><small>DATA DO FECHAMENTO</small><strong>{{ item.settledAt | date:'dd/MM/yyyy HH:mm' }}</strong></div>
+                    <div><small>QUANTIDADE</small><strong>{{ vm.settlementItemCount(item) }} cortes · {{ item.totalPieces | number:'1.0-0' }} peças</strong></div>
+                    <div><small>REGISTRADO POR</small><strong>{{ item.createdBy || '—' }}</strong></div>
+                </div>
+                <button class="secondary pdf-action" (click)="vm.printSettlementPdf(item)">Salvar fechamento em PDF</button>
+            </div>
+        </article>
+        <div class="empty no-results" *ngIf="!vm.filteredReportSettlements.length">
+            <strong>{{ vm.reportSupplierSearch ? 'Nenhum fechamento corresponde à pesquisa.' : 'Nenhum fechamento encontrado.' }}</strong>
+            <span>Somente faturamentos concluídos no mês selecionado entram neste resumo.</span>
+        </div>
+        <nav class="report-pagination" *ngIf="vm.filteredReportSettlements.length > vm.reportPageSize" aria-label="Páginas do histórico">
+            <button class="secondary" [disabled]="vm.reportPage === 0" (click)="vm.reportPage = vm.reportPage - 1">Anterior</button>
+            <span>Página {{ vm.reportPage + 1 }} de {{ vm.reportPageCount }}</span>
+            <button class="secondary" [disabled]="vm.reportPage + 1 >= vm.reportPageCount" (click)="vm.reportPage = vm.reportPage + 1">Próxima</button>
+        </nav>
+    </div>
+</section>

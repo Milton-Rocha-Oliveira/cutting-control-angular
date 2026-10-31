@@ -1,0 +1,76 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "projects": {
+    "controle-de-cortes": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/controle-de-cortes",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.css"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
+                }
+              ],
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            },
+            "androidOffline": {
+              "serviceWorker": false
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "controle-de-cortes:build:production"
+            },
+            "development": {
+              "buildTarget": "controle-de-cortes:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "buildTarget": "controle-de-cortes:build:development"
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": "2b48cc85-cf38-42ef-8e02-23dd6046406d"
+  }
+}

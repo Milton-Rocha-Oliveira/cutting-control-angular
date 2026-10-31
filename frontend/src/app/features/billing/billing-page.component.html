@@ -1,0 +1,28 @@
+<section class="billing-layout">
+    <div class="panel form-panel">
+        <div class="section-icon">$</div>
+        <h3>Faturar fornecedor</h3>
+        <p>Selecione um ou mais cortes ativos. Cada corte é faturado integralmente.</p><label>Fornecedor<select
+            [ngModel]="vm.billing.supplierId" (ngModelChange)="vm.setBillingSupplier($event)">
+        <option *ngFor="let s of vm.activeSuppliers()" [ngValue]="s.id">{{ s.name }}</option>
+    </select></label>
+        <div class="check-list"><label class="check-row" *ngFor="let c of vm.cutsForSupplier()"><input type="checkbox"
+                                                                                                       [checked]="vm.isSelected(c.id)"
+                                                                                                       (change)="vm.toggleCut(c.id,$any($event.target).checked)"><span><b>{{ c.cutNumber }}
+            — {{ c.description }}</b><small>{{ c.totalPieces }}
+            peças · {{ vm.money(c.totalAmount) }}</small></span></label>
+            <div class="empty" *ngIf="!vm.cutsForSupplier().length">Nenhum corte ativo para este fornecedor.</div>
+        </div>
+    </div>
+    <div class="panel billing-help"><h3>Revisão do faturamento</h3>
+        <p>{{ vm.selectedCuts().length }} corte(s) selecionado(s)</p>
+        <div class="review-row" *ngFor="let c of vm.selectedCuts()"><span>{{ c.cutNumber }}<small>{{ c.totalPieces }}
+            peças</small></span><b>{{ vm.money(c.totalAmount) }}</b></div>
+        <div class="review-total"><span>Total: {{ vm.selectedPieces() }}
+            peças</span><b>{{ vm.money(vm.selectedAmount()) }}</b></div>
+        <button class="primary wide" [disabled]="!vm.selectedCutIds.length" (click)="vm.bill()">Confirmar faturamento
+        </button>
+        <div class="help-item"><b>01</b><span>Processamento transacional e rastreável.</span></div>
+        <div class="help-item"><b>02</b><span>Snapshots e totais gravados na fatura.</span></div>
+    </div>
+</section>

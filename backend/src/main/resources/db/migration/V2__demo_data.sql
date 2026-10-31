@@ -1,0 +1,1 @@
+-- Dados fictícios desativados. A aplicação agora inicia em branco para permitir cadastro do zero.

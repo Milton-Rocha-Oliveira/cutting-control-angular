@@ -1,0 +1,7 @@
+[build]
+  base = "frontend"
+  command = "npm run build:vercel"
+  publish = "dist/controle-de-cortes/browser"
+
+[build.environment]
+  NODE_VERSION = "22"

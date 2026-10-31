@@ -1,0 +1,2 @@
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core'; import { CommonModule } from '@angular/common'; import { FormsModule } from '@angular/forms'; import type { AppComponent } from '../../app.component';
+@Component({selector:'app-reports-page',standalone:true,imports:[CommonModule,FormsModule],templateUrl:'./reports-page.component.html',styleUrl:'./reports-page.component.css',changeDetection:ChangeDetectionStrategy.Default}) export class ReportsPageComponent{@Input({required:true}) vm!:AppComponent;}
