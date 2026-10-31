@@ -1,0 +1,77 @@
+<section class="suppliers-page">
+    <div class="suppliers-heading">
+        <div>
+            <p class="eyebrow">CADASTROS</p>
+            <h2>Fornecedores</h2>
+            <p>Organize os contatos que fazem parte da sua produção.</p>
+        </div>
+        <span class="supplier-count">{{ vm.suppliers.length }} fornecedor(es)</span>
+    </div>
+
+    <div class="supplier-layout">
+        <section class="panel supplier-form-panel">
+            <div class="supplier-panel-heading">
+                <span class="supplier-icon" aria-hidden="true">＋</span>
+                <div>
+                    <h3>{{ vm.editingSupplierId === null ? 'Adicionar fornecedor' : 'Editar fornecedor' }}</h3>
+                    <p>Preencha os dados de contato.</p>
+                </div>
+            </div>
+
+            <div class="supplier-fields">
+                <label>Nome ou razão social
+                    <input [(ngModel)]="vm.supplierForm.name" placeholder="Ex.: Confecções Silva" autocomplete="organization">
+                </label>
+                <label>CPF ou CNPJ
+                    <input [(ngModel)]="vm.supplierForm.document" placeholder="Documento do fornecedor" inputmode="numeric">
+                </label>
+                <label>E-mail
+                    <input [(ngModel)]="vm.supplierForm.email" type="email" placeholder="contato@empresa.com" autocomplete="email">
+                </label>
+                <label>Telefone
+                    <input [(ngModel)]="vm.supplierForm.phone" type="tel" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel">
+                </label>
+            </div>
+
+            <div class="supplier-form-actions">
+                <button class="primary" (click)="vm.saveSupplier()">
+                    {{ vm.editingSupplierId === null ? 'Salvar fornecedor' : 'Salvar alterações' }}
+                </button>
+                <button *ngIf="vm.editingSupplierId !== null" class="secondary" (click)="vm.cancelEditSupplier()">Cancelar</button>
+            </div>
+        </section>
+
+        <section class="panel supplier-list-panel">
+            <div class="supplier-list-heading">
+                <div>
+                    <h3>Seus fornecedores</h3>
+                    <p>Dados cadastrados neste dispositivo.</p>
+                </div>
+                <span class="supplier-count compact">{{ vm.suppliers.length }}</span>
+            </div>
+
+            <div class="supplier-list" *ngIf="vm.suppliers.length; else noSuppliers">
+                <article class="supplier-card" *ngFor="let s of vm.suppliers">
+                    <span class="supplier-avatar">{{ s.name.slice(0, 2).toUpperCase() }}</span>
+                    <div class="supplier-info">
+                        <strong>{{ s.name }}</strong>
+                        <small>{{ s.document || 'Documento não informado' }}</small>
+                        <small *ngIf="s.phone">{{ s.phone }}</small>
+                    </div>
+                    <span class="status-pill" [class.inactive]="!s.active">{{ s.active ? 'Ativo' : 'Inativo' }}</span>
+                    <div class="supplier-actions">
+                        <button class="secondary small" (click)="vm.startEditSupplier(s)">Editar</button>
+                        <button class="danger small" (click)="vm.deleteSupplier(s.id)">Excluir</button>
+                    </div>
+                </article>
+            </div>
+            <ng-template #noSuppliers>
+                <div class="supplier-empty">
+                    <span aria-hidden="true">♧</span>
+                    <strong>Nenhum fornecedor cadastrado</strong>
+                    <p>Use o formulário para adicionar seu primeiro fornecedor.</p>
+                </div>
+            </ng-template>
+        </section>
+    </div>
+</section>

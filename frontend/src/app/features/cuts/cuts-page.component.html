@@ -1,0 +1,71 @@
+<section class="cuts-view">
+    <div class="grid-2">
+        <div class="panel form-panel"><h3>{{ vm.editingCutId === null ? 'Novo corte' : 'Editar corte' }}</h3>
+            <p>Registre uma ordem/lote de corte da produção.</p><label>Fornecedor<select
+                    [(ngModel)]="vm.cutForm.supplierId">
+                <option [ngValue]="0">Selecione</option>
+                <option *ngFor="let s of vm.suppliers" [ngValue]="s.id">{{ s.name }}</option>
+            </select></label><label>Número do corte<input [(ngModel)]="vm.cutForm.cutNumber"
+                                                          placeholder="COR-004"></label><label>Tipo de corte<input
+                    [(ngModel)]="vm.cutForm.description" list="cut-types" placeholder="Ex.: Calça jeans"></label>
+            <datalist id="cut-types">
+                <option *ngFor="let type of vm.rememberedCutTypes()" [value]="type"></option>
+            </datalist>
+            <div class="inline"><label>Pacotes<input [(ngModel)]="vm.cutForm.packages" type="number"
+                                                     min="1"></label><label>Peças por pacote<input
+                    [(ngModel)]="vm.cutForm.piecesPerPackage" type="number" min="1"></label></div>
+            <div class="inline"><label>Preço por peça<input [(ngModel)]="vm.cutForm.unitPricePerPiece" type="number"
+                                                            min="0" step="0.01"></label><label>Produção<input
+                    [(ngModel)]="vm.cutForm.productionDate" type="date"></label></div>
+            <div class="cut-shortcuts" *ngIf="vm.recentCutPresetsForSupplier().length">
+                <span>Preenchimentos recentes deste fornecedor</span>
+                <button type="button" class="secondary small" *ngFor="let preset of vm.recentCutPresetsForSupplier()"
+                        (click)="vm.applyCutPreset(preset)">
+                    {{ preset.description }} · {{ preset.packages }} × {{ preset.piecesPerPackage }} · {{ vm.money(preset.unitPricePerPiece) }}
+                </button>
+            </div>
+            <div class="row-actions">
+                <button type="button" class="primary" [disabled]="vm.savingCut"
+                        (click)="vm.saveCut()">{{ vm.savingCut ? 'Salvando…' : vm.editingCutId === null ? 'Salvar corte' : 'Salvar alterações' }}
+                </button>
+                <button *ngIf="vm.editingCutId!==null" class="secondary" (click)="vm.cancelEditCut()">Cancelar</button>
+            </div>
+            <p class="cut-form-feedback" *ngIf="vm.message" role="status" aria-live="polite">{{ vm.message }}</p>
+        </div>
+        <div class="panel">
+            <div class="panel-title">
+                <div><h3>Cortes cadastrados</h3>
+                    <p>Cortes ativos disponíveis para faturamento</p></div>
+                <input class="list-search" [(ngModel)]="vm.cutSupplierSearch" placeholder="Pesquisar fornecedor"></div>
+            <div class="card-list">
+                <div class="data-card" *ngFor="let c of vm.filteredCuts()" [class.is-open]="vm.expandedCutId===c.id"
+                     (click)="vm.toggleCutDetails(c.id)">
+                    <div class="card-head">
+                        <div><strong>{{ c.cutNumber }}</strong><small>{{ c.description }}</small></div>
+                        <div class="card-meta"><span class="status"
+                                                     [class.off]="c.status!=='ACTIVE'">{{ c.status === 'ACTIVE' ? 'Ativo' : 'Inativo' }}</span><b>{{ vm.money(c.totalAmount) }}</b>
+                            <button *ngIf="c.status==='ACTIVE'" class="secondary small"
+                                    (click)="$event.stopPropagation();vm.startEditCut(c)">Editar
+                            </button>
+                            <button *ngIf="c.status==='ACTIVE'" class="danger small"
+                                    (click)="$event.stopPropagation();vm.deleteCut(c)">Excluir
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-summary">
+                        <span>{{ c.supplierName }}</span><span>{{ c.productionDate | date:'dd/MM/yyyy' }}</span><span>{{ c.totalPieces }}
+                        peças</span></div>
+                    <div class="card-details" *ngIf="vm.expandedCutId===c.id">
+                        <div class="detail-grid">
+                            <div><label>Pacotes</label>
+                                <p>{{ c.packages }} × {{ c.piecesPerPackage }}</p></div>
+                            <div><label>Preço unitário</label>
+                                <p>{{ vm.money(c.unitPricePerPiece) }}</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="empty" *ngIf="!vm.filteredCuts().length">Nenhum corte encontrado.</div>
+            </div>
+        </div>
+    </div>
+</section>
